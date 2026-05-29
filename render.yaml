@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: hexlet-code
+    runtime: python
+    buildCommand: make build
+    startCommand: make render-start
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: false
