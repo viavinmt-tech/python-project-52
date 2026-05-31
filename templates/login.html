@@ -6,12 +6,12 @@
     <form method="post">
         {% csrf_token %}
         <div class="mb-3">
-            <label for="username" class="form-label fw-normal text-dark mb-1">Имя пользователя</label>
-            <input type="text" name="username" id="username" class="form-control" placeholder="Имя пользователя" required>
+            <label for="id_username" class="form-label fw-normal text-dark mb-1">Имя пользователя</label>
+            <input type="text" name="username" id="id_username" class="form-control" placeholder="Имя пользователя" required>
         </div>
         <div class="mb-3">
-            <label for="password" class="form-label fw-normal text-dark mb-1">Пароль</label>
-            <input type="password" name="password" id="password" class="form-control" placeholder="Пароль" required>
+            <label for="id_password" class="form-label fw-normal text-dark mb-1">Пароль</label>
+            <input type="password" name="password" id="id_password" class="form-control" placeholder="Пароль" required>
         </div>
         <button type="submit" class="btn btn-primary">Войти</button>
     </form>
