@@ -89,6 +89,7 @@ def get_rollbar_config():
         'environment': 'production' if not DEBUG else 'development',
         'code_version': '1.0.0',
         'root': BASE_DIR,
+    'handler': 'blocking',
     }
     if not DEBUG:
         config['exception_level_filters'] = [
@@ -103,3 +104,15 @@ def get_rollbar_config():
 
 ROLLBAR = get_rollbar_config()
 # =============================================================
+
+# Инициализация Rollbar
+import rollbar
+import rollbar.contrib.django
+
+rollbar.init(
+    os.getenv('ROLLBAR_ACCESS_TOKEN'),
+    'development' if DEBUG else 'production',
+    handler='blocking'
+)
+
+MIDDLEWARE.append('rollbar.contrib.django.middleware.RollbarNotifierMiddleware')
