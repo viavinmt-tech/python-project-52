@@ -2,4 +2,6 @@
 curl -LsSf https://astral.sh/uv/install.sh | sh
 export PATH="$HOME/.local/bin:$PATH"
 
-uv pip install -r requirements.txt
+uv pip install --system -r requirements.txt
+python manage.py collectstatic --noinput
+python manage.py migrate --noinput
