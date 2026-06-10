@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -49,7 +49,6 @@ class CustomLogoutView(LogoutView):
         return super().dispatch(request, *args, **kwargs)
 
 def trigger_error(request):
-    """Trigger a test error for Rollbar."""
     a = None
     a.hello()
     return HttpResponse("This will not be reached")
@@ -76,3 +75,5 @@ urlpatterns = [
     path('labels/<int:pk>/update/', LabelUpdateView.as_view(), name='label_update'),
     path('labels/<int:pk>/delete/', LabelDeleteView.as_view(), name='label_delete'),
     path('admin/', admin.site.urls),
+    path('test-error/', trigger_error, name='test_error'),
+]
