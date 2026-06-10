@@ -4,13 +4,13 @@ install:
 	uv pip install -r requirements.txt
 
 migrate:
-	python manage.py migrate
+	uv run python manage.py migrate
 
 collectstatic:
-	python manage.py collectstatic --noinput
+	uv run python manage.py collectstatic --noinput
 
 render-start:
-	gunicorn task_manager.wsgi:application
+	uv run gunicorn task_manager.wsgi:application
 
 build:
 	./build.sh

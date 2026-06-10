@@ -2,4 +2,6 @@
 curl -LsSf https://astral.sh/uv/install.sh | sh
 export PATH="$HOME/.local/bin:$PATH"
 
+uv venv --clear
+source .venv/bin/activate
 make install && make collectstatic && make migrate
