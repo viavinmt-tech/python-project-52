@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="ms-3">
+    <h1 class="fw-normal mb-4">Просмотр задачи</h1>
+    
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Имя</label>
+        <p>{{ task.name }}</p>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Описание</label>
+        <p>{{ task.description|default:"—" }}</p>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Статус</label>
+        <p>{{ task.status.name }}</p>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Автор</label>
+        <p>{{ task.author.username }}</p>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Исполнитель</label>
+        <p>{{ task.executor.username|default:"—" }}</p>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Метки</label>
+        <p>
+            {% for label in task.labels.all %}
+                <span class="badge bg-secondary">{{ label.name }}</span>
+            {% empty %}
+                —
+            {% endfor %}
+        </p>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label fw-semibold">Дата создания</label>
+        <p>{{ task.created_at|date:"d.m.Y H:i" }}</p>
+    </div>
+    
+    <a href="{% url 'tasks' %}" class="btn btn-secondary">Назад</a>
+</div>
+{% endblock %}

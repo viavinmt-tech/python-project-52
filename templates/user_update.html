@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="ms-3">
+    <h1 class="fw-normal mb-4">Изменение пользователя</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_first_name" class="form-label fw-normal text-dark mb-1">Имя</label>
+            <input type="text" name="first_name" id="id_first_name" class="form-control" value="{{ form.first_name.value|default:'' }}">
+        </div>
+        <div class="mb-3">
+            <label for="id_last_name" class="form-label fw-normal text-dark mb-1">Фамилия</label>
+            <input type="text" name="last_name" id="id_last_name" class="form-control" value="{{ form.last_name.value|default:'' }}">
+        </div>
+        <div class="mb-3">
+            <label for="id_username" class="form-label fw-normal text-dark mb-1">Имя пользователя</label>
+            <input type="text" name="username" id="id_username" class="form-control" value="{{ form.username.value|default:'' }}" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Изменить</button>
+    </form>
+</div>
+{% endblock %}
