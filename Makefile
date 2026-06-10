@@ -1,7 +1,7 @@
-.PHONY: install migrate collectstatic render-start build
-
-render-start:
-	gunicorn task_manager.wsgi:application
+.PHONY: build render-start
 
 build:
 	./build.sh
+
+render-start:
+	./.venv/bin/gunicorn task_manager.wsgi:application
