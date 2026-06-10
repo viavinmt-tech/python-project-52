@@ -1,13 +1,15 @@
 .PHONY: install migrate collectstatic render-start build
 
+PYTHON = /opt/render/project/python/Python-3.12.13/bin/python3.12
+
 install:
 	uv pip install --system -r requirements.txt
 
 migrate:
-	python manage.py migrate
+	$(PYTHON) manage.py migrate
 
 collectstatic:
-	python manage.py collectstatic --noinput
+	$(PYTHON) manage.py collectstatic --noinput
 
 render-start:
 	gunicorn task_manager.wsgi:application
