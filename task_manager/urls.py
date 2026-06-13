@@ -31,6 +31,9 @@ def register_view(request):
     return render(request, 'register.html', {'form': form})
 
 class CustomLoginView(LoginView):
+    def form_valid(self, form):
+        messages.success(self.request, "Вы залогинены")
+        return super().form_valid(form)
     template_name = 'login.html'
 
 class CustomLogoutView(LogoutView):
