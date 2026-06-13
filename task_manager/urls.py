@@ -1,18 +1,11 @@
 from django.contrib import admin
 from django.urls import path
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import HttpResponse
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django_filters.views import FilterView
-from .models import Status, Task, Label
-from .forms import StatusForm, TaskForm, LabelForm
-from .filters import TaskFilter
 from .views import (
     StatusListView, StatusCreateView, StatusUpdateView, StatusDeleteView,
     TaskListView, TaskCreateView, TaskUpdateView, TaskDeleteView, TaskDetailView,
@@ -39,9 +32,6 @@ def register_view(request):
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
-    
-    def form_valid(self, form):
-        return super().form_valid(form)
 
 class CustomLogoutView(LogoutView):
     def dispatch(self, request, *args, **kwargs):
