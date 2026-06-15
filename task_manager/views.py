@@ -269,3 +269,22 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         response = super().form_valid(form)
         messages.success(self.request, 'Задача успешно создана')
         return response
+
+class TaskCreateView(LoginRequiredMixin, CreateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'task_create.html'
+    success_url = reverse_lazy('tasks')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Вывод для отладки
+        print("=== USERS COUNT:", User.objects.count())
+        print("=== USERS:", list(User.objects.values_list('username', flat=True)))
+        return context
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, 'Задача успешно создана')
+        return response
