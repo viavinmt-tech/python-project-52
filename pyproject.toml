@@ -20,6 +20,10 @@ dependencies = [
     "rollbar>=1.3.0",
 ]
 
+[tool.setuptools.packages.find]
+include = ["task_manager*", "task_manager.*"]
+exclude = ["templates*", "tests*", "migrations*"]
+
 [tool.flake8]
 max-line-length = 100
 exclude = [
