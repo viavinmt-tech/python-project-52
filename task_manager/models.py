@@ -47,3 +47,5 @@ class Label(models.Model):
     
     def __str__(self):
         return self.name
+from django.contrib.auth.models import User
+User.add_to_class('fullName', property(lambda self: f"{self.first_name} {self.last_name}".strip()))

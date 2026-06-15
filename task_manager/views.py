@@ -240,3 +240,16 @@ class StatusDeleteView(LoginRequiredMixin, DeleteView):
             return redirect('statuses')
         messages.success(request, 'Статус успешно удален')
         return super().post(request, *args, **kwargs)
+
+class LabelDeleteView(LoginRequiredMixin, DeleteView):
+    model = Label
+    template_name = 'label_delete.html'
+    success_url = reverse_lazy('labels')
+    
+    def post(self, request, *args, **kwargs):
+        label = self.get_object()
+        if label.task_set.exists():
+            messages.error(request, 'Невозможно удалить метку, потому что она используется')
+            return redirect('labels')
+        messages.success(request, 'Метка успешно удалена')
+        return super().post(request, *args, **kwargs)
