@@ -24,12 +24,19 @@
         <div class="mb-3">
             <label for="id_description" class="form-label fw-normal text-dark mb-1">Описание</label>
             <textarea name="description" id="id_description" 
-                      class="form-control w-50">{{ form.description.value|default:'' }}</textarea>
+                      class="form-control w-50 {% if form.description.errors %}is-invalid{% elif form.description.value %}is-valid{% endif %}">{{ form.description.value|default:'' }}</textarea>
+            {% if form.description.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.description.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
         
         <div class="mb-3">
             <label for="id_status" class="form-label fw-normal text-dark mb-1">Статус</label>
-            <select name="status" id="id_status" class="form-select w-50" required>
+            <select name="status" id="id_status" class="form-select w-50 {% if form.status.errors %}is-invalid{% elif form.status.value %}is-valid{% endif %}" required>
                 <option value="">---------</option>
                 {% for status in form.fields.status.queryset %}
                 <option value="{{ status.pk }}" {% if form.status.value|stringformat:"s" == status.pk|stringformat:"s" %}selected{% endif %}>{{ status.name }}</option>
@@ -56,12 +63,19 @@
         
         <div class="mb-3">
             <label for="id_labels" class="form-label fw-normal text-dark mb-1">Метки</label>
-            <select name="labels" id="id_labels" class="form-select w-50" multiple>
+            <select name="labels" id="id_labels" class="form-select w-50 {% if form.labels.errors %}is-invalid{% elif form.labels.value %}is-valid{% endif %}" multiple>
                 {% for label in form.fields.labels.queryset %}
-                <option value="{{ label.pk }}">{{ label.name }}</option>
+                <option value="{{ label.pk }}" {% if label.pk|stringformat:"s" in form.labels.value|stringformat:"s" %}selected{% endif %}>{{ label.name }}</option>
                 {% endfor %}
             </select>
             <small class="text-muted">Удерживайте Ctrl для выбора нескольких меток</small>
+            {% if form.labels.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.labels.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
         
         <button type="submit" class="btn btn-primary">Создать</button>
