@@ -8,37 +8,32 @@
         {% csrf_token %}
         <div class="mb-3">
             <label for="id_name" class="form-label fw-normal text-dark mb-1">Имя</label>
-            <input type="text" name="name" id="id_name" class="form-control w-50 {% if form.name.errors %}is-invalid{% endif %}" value="{{ form.name.value|default:'' }}" required>
-            {% if form.name.errors %}
-                <div class="text-danger small">
-                    {% for error in form.name.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
+            <input type="text" name="name" id="id_name" class="form-control w-50" required>
         </div>
         <div class="mb-3">
             <label for="id_description" class="form-label fw-normal text-dark mb-1">Описание</label>
-            <textarea name="description" id="id_description" class="form-control w-50 {% if form.name.errors %}is-invalid{% endif %}" rows="4">{{ form.description.value|default:'' }}</textarea>
+            <textarea name="description" id="id_description" class="form-control w-50" rows="4"></textarea>
         </div>
         <div class="mb-3">
             <label for="id_status" class="form-label fw-normal text-dark mb-1">Статус</label>
             <select name="status" id="id_status" class="form-select w-50" required>
                 <option value="">---------</option>
                 {% for status in form.fields.status.queryset %}
-                <option value="{{ status.pk }}" {% if form.status.value|stringformat:"s" == status.pk|stringformat:"s" %}selected{% endif %}>{{ status.name }}</option>
+                <option value="{{ status.pk }}">{{ status.name }}</option>
                 {% endfor %}
             </select>
         </div>
+        {% if form.fields.executor.queryset %}
         <div class="mb-3">
             <label for="id_executor" class="form-label fw-normal text-dark mb-1">Исполнитель</label>
             <select name="executor" id="id_executor" class="form-select w-50">
                 <option value="">---------</option>
                 {% for user in form.fields.executor.queryset %}
-                <option value="{{ user.pk }}" {% if form.executor.value|stringformat:"s" == user.pk|stringformat:"s" %}selected{% endif %}>{{ user.username }}</option>
+                <option value="{{ user.pk }}">{{ user.username }}</option>
                 {% endfor %}
             </select>
         </div>
+        {% endif %}
         <div class="mb-3">
             <label for="id_labels" class="form-label fw-normal text-dark mb-1">Метки</label>
             <select name="labels" id="id_labels" class="form-select w-50" multiple>
