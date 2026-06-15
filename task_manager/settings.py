@@ -117,3 +117,6 @@ except ImportError:
 
 # Message storage
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# Message storage
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
