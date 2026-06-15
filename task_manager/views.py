@@ -312,3 +312,21 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         response = super().form_valid(form)
         messages.success(self.request, 'Задача успешно создана')
         return response
+
+class TaskCreateView(LoginRequiredMixin, CreateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'task_create.html'
+    success_url = reverse_lazy('tasks')
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['executor'].queryset = User.objects.all()
+        form.fields['labels'].queryset = Label.objects.all()
+        return form
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, 'Задача успешно создана')
+        return response
