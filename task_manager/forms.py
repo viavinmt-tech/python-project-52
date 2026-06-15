@@ -1,5 +1,6 @@
 from django import forms
 from .models import Status, Task, Label
+from django.contrib.auth.models import User
 
 class StatusForm(forms.ModelForm):
     class Meta:
@@ -20,6 +21,13 @@ class TaskForm(forms.ModelForm):
         label='Метки'
     )
     
+    executor = forms.ModelChoiceField(
+        queryset=User.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label='Исполнитель'
+    )
+    
     class Meta:
         model = Task
         fields = ['name', 'description', 'status', 'executor', 'labels']
@@ -27,13 +35,11 @@ class TaskForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Описание', 'rows': 4}),
             'status': forms.Select(attrs={'class': 'form-select'}),
-            'executor': forms.Select(attrs={'class': 'form-select'}),
         }
         labels = {
             'name': 'Имя',
             'description': 'Описание',
             'status': 'Статус',
-            'executor': 'Исполнитель',
         }
 
 class LabelForm(forms.ModelForm):
