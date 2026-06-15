@@ -153,29 +153,6 @@ class LabelDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(request, 'Метка успешно удалена')
         return super().post(request, *args, **kwargs)
 
-class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = User
-    fields = ['first_name', 'last_name', 'username']
-    template_name = 'user_update.html'
-    success_url = reverse_lazy('users')
-    
-    def test_func(self):
-        return self.request.user.pk == self.get_object().pk
-    
-    def handle_no_permission(self):
-        messages.error(self.request, 'У вас нет прав для изменения')
-        return redirect('users')
-    
-    def form_valid(self, form):
-        user = form.save(commit=False)
-        password = self.request.POST.get('password')
-        password_confirm = self.request.POST.get('password_confirm')
-        if password and password == password_confirm:
-            user.set_password(password)
-        user.save()
-        messages.success(self.request, 'Пользователь успешно изменен')
-        return super().form_valid(form)
-
 class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = User
     template_name = 'user_delete.html'
@@ -203,23 +180,6 @@ def trigger_error(request):
     a = None
     a.hello()
     return HttpResponse("This will not be reached")
-
-class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = User
-    fields = ['first_name', 'last_name', 'username']
-    template_name = 'user_update.html'
-    success_url = reverse_lazy('users')
-    
-    def test_func(self):
-        return self.request.user.pk == self.get_object().pk
-    
-    def handle_no_permission(self):
-        messages.error(self.request, 'У вас нет прав для изменения')
-        return redirect('users')
-    
-    def post(self, request, *args, **kwargs):
-        messages.success(request, 'Пользователь успешно изменен')
-        return super().post(request, *args, **kwargs)
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
@@ -254,3 +214,26 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         messages.success(request, 'Задача успешно удалена')
         return super().post(request, *args, **kwargs)
+
+class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = User
+    fields = ['first_name', 'last_name', 'username']
+    template_name = 'user_update.html'
+    success_url = reverse_lazy('users')
+    
+    def test_func(self):
+        return self.request.user.pk == self.get_object().pk
+    
+    def handle_no_permission(self):
+        messages.error(self.request, 'У вас нет прав для изменения')
+        return redirect('users')
+    
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        password = self.request.POST.get('password')
+        password_confirm = self.request.POST.get('password_confirm')
+        if password and password == password_confirm:
+            user.set_password(password)
+        user.save()
+        messages.success(self.request, 'Пользователь успешно изменен')
+        return super().form_valid(form)
