@@ -287,3 +287,44 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         response = super().form_valid(form)
         messages.success(self.request, 'Задача успешно создана')
         return response
+
+class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = User
+    fields = ['first_name', 'last_name', 'username']
+    template_name = 'user_update.html'
+    success_url = reverse_lazy('users')
+    
+    def test_func(self):
+        return self.request.user.pk == self.get_object().pk
+    
+    def handle_no_permission(self):
+        messages.error(self.request, 'У вас нет прав для изменения')
+        return redirect('users')
+    
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        password = self.request.POST.get('password')
+        password_confirm = self.request.POST.get('password_confirm')
+        if password and password == password_confirm:
+            user.set_password(password)
+        user.save()
+        messages.success(self.request, 'Пользователь успешно изменен')
+        return super().form_valid(form)
+
+class TaskCreateView(LoginRequiredMixin, CreateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'task_create.html'
+    success_url = reverse_lazy('tasks')
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['executor'].queryset = User.objects.all()
+        form.fields['labels'].queryset = Label.objects.all()
+        return form
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, 'Задача успешно создана')
+        return response

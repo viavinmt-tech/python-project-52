@@ -17,6 +17,15 @@
             <label for="id_username" class="form-label fw-normal text-dark mb-1">Имя пользователя</label>
             <input type="text" name="username" id="id_username" class="form-control" value="{{ form.username.value|default:'' }}" required>
         </div>
+        <div class="mb-3">
+            <label for="id_password" class="form-label fw-normal text-dark mb-1">Пароль</label>
+            <input type="password" name="password" id="id_password" class="form-control">
+            <small class="text-muted">Оставьте пустым, если не хотите менять пароль.</small>
+        </div>
+        <div class="mb-3">
+            <label for="id_password_confirm" class="form-label fw-normal text-dark mb-1">Подтверждение пароля</label>
+            <input type="password" name="password_confirm" id="id_password_confirm" class="form-control">
+        </div>
         <button type="submit" class="btn btn-primary">Изменить</button>
     </form>
 </div>
