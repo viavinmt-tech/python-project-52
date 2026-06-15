@@ -4,77 +4,50 @@
 <div class="ms-3">
     <h1 class="fw-normal mb-4">Просмотр задачи</h1>
     
-    <!-- Основная рамка -->
-    <div class="card bg-light border-secondary-subtle rounded-3 shadow-sm">
-        <!-- Название задачи на сером фоне -->
-        <div class="card-header bg-light border-0 pb-0">
-            <h2 class="fw-normal mb-0">{{ task.name }}</h2>
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h2 class="mb-0 fs-4">{{ task.name }}</h2>
         </div>
-        
-        <div class="card-body pt-3">
-            <!-- Описание задачи (без рамки) -->
-            <div class="mb-3">
-                {{ task.description|default:"—" }}
+        <div class="card-body bg-light">
+            {% if task.description %}
+                <div class="mb-3">
+                    <p>{{ task.description }}</p>
+                </div>
+                <hr>
+            {% endif %}
+            
+            <div class="row mb-3">
+                <div class="col-3 fw-semibold">Автор</div>
+                <div class="col-9">{{ task.author.username }}</div>
             </div>
             
-            <!-- Серая полоса-разделитель -->
-            <hr class="border-secondary-subtle my-3">
-            
-            <!-- Данные задачи -->
-            <div class="row">
-                <div class="col-4">
-                    <strong>Автор</strong>
-                </div>
-                <div class="col-8">
-                    {{ task.author.username }}
-                </div>
+            <div class="row mb-3">
+                <div class="col-3 fw-semibold">Исполнитель</div>
+                <div class="col-9">{{ task.executor.username|default:"—" }}</div>
             </div>
             
-            <div class="row mt-2">
-                <div class="col-4">
-                    <strong>Исполнитель</strong>
-                </div>
-                <div class="col-8">
-                    {{ task.executor.username|default:"—" }}
-                </div>
+            <div class="row mb-3">
+                <div class="col-3 fw-semibold">Статус</div>
+                <div class="col-9">{{ task.status.name }}</div>
             </div>
             
-            <div class="row mt-2">
-                <div class="col-4">
-                    <strong>Статус</strong>
-                </div>
-                <div class="col-8">
-                    {{ task.status.name }}
-                </div>
+            <div class="row mb-3">
+                <div class="col-3 fw-semibold">Дата создания</div>
+                <div class="col-9">{{ task.created_at|date:"d.m.Y H:i" }}</div>
             </div>
             
-            <div class="row mt-2">
-                <div class="col-4">
-                    <strong>Дата создания</strong>
-                </div>
-                <div class="col-8">
-                    {{ task.created_at|date:"d.m.Y H:i" }}
+            <div class="row mb-3">
+                <div class="col-3 fw-semibold align-self-start">Метки</div>
+                <div class="col-9">
+                    {% for label in task.labels.all %}
+                        <div>• {{ label.name }}</div>
+                    {% empty %}
+                        <div>—</div>
+                    {% endfor %}
                 </div>
             </div>
             
-            <!-- Метки -->
-            <div class="row mt-3">
-                <div class="col-4">
-                    <strong>Метки</strong>
-                </div>
-                <div class="col-8">
-                    <ul class="mb-0">
-                        {% for label in task.labels.all %}
-                            <li>{{ label.name }}</li>
-                        {% empty %}
-                            <li>—</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- Ссылки действий -->
-            <div class="mt-4 d-flex flex-column gap-2">
+            <div class="d-flex flex-column gap-2 mt-3">
                 <a href="{% url 'task_update' task.pk %}" class="text-primary text-decoration-underline">Изменить</a>
                 <a href="{% url 'task_delete' task.pk %}" class="text-primary text-decoration-underline">Удалить</a>
             </div>

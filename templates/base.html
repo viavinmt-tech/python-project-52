@@ -45,28 +45,15 @@
     </nav>
 
     <main class="px-4 flex-grow-1">
-        <div class="mt-2">
-            {% if messages %}
-                {% for message in messages %}
-                    {% if "зарегистрирован" in message.message or "залогинены" in message.message or "изменен" in message.message or "создан" in message.message or "создана" in message.message %}
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    {% elif "разлогинены" in message.message or "удален" in message.message or "удалена" in message.message or "нет прав" in message.message or "может удалить только ее автор" in message.message or "Невозможно удалить пользователя" in message.message or "Невозможно удалить метку" in message.message or "Невозможно удалить статус" in message.message %}
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
         {% block content %}
         {% endblock %}
     </main>

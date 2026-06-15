@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import dj_database_url
+from django.http import Http404
 
 load_dotenv()
 
@@ -31,6 +32,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'rollbar.contrib.django.middleware.RollbarNotifierMiddleware',
 ]
 
 ROOT_URLCONF = 'task_manager.urls'
@@ -60,7 +62,15 @@ DATABASES = {
     )
 }
 
-AUTH_PASSWORD_VALIDATORS = []
+# Password validation
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 3,
+        }
+    },
+]
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -77,14 +87,13 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = '/login/'
 
-# =================== ROLLBAR CONFIGURATION ===================
+# Rollbar configuration
 def get_rollbar_config():
     config = {
         'access_token': os.getenv('ROLLBAR_ACCESS_TOKEN'),
         'environment': 'production' if not DEBUG else 'development',
         'code_version': '1.0.0',
         'root': BASE_DIR,
-    'handler': 'blocking',
     }
     if not DEBUG:
         config['exception_level_filters'] = [
@@ -98,16 +107,13 @@ def get_rollbar_config():
     return config
 
 ROLLBAR = get_rollbar_config()
-# =============================================================
 
-# Инициализация Rollbar
-import rollbar
-import rollbar.contrib.django
+try:
+    import rollbar
+    import rollbar.contrib.django
+    MIDDLEWARE.append('rollbar.contrib.django.middleware.RollbarNotifierMiddleware')
+except ImportError:
+    pass
 
-rollbar.init(
-    os.getenv('ROLLBAR_ACCESS_TOKEN'),
-    'development' if DEBUG else 'production',
-    handler='blocking'
-)
-
-MIDDLEWARE.append('rollbar.contrib.django.middleware.RollbarNotifierMiddleware')
+# Message storage
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'

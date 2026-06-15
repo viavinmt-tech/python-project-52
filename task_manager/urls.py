@@ -1,16 +1,16 @@
 from django.contrib import admin
 from django.urls import path
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import HttpResponse
 from .views import (
+    register_view,
     StatusListView, StatusCreateView, StatusUpdateView, StatusDeleteView,
     TaskListView, TaskCreateView, TaskUpdateView, TaskDeleteView, TaskDetailView,
     LabelListView, LabelCreateView, LabelUpdateView, LabelDeleteView,
-    UserDeleteView, UserUpdateView
+    UserUpdateView, UserDeleteView
 )
 
 def home(request):
@@ -19,22 +19,12 @@ def home(request):
 def users(request):
     return render(request, 'users.html', {'users': User.objects.all()})
 
-def register_view(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Пользователь успешно зарегистрирован')
-            return redirect('login')
-    else:
-        form = UserCreationForm()
-    return render(request, 'register.html', {'form': form})
-
 class CustomLoginView(LoginView):
-    def form_valid(self, form):
-        messages.success(self.request, "Вы залогинены")
-        return super().form_valid(form)
     template_name = 'login.html'
+    
+    def form_valid(self, form):
+        messages.success(self.request, 'Вы залогинены')
+        return super().form_valid(form)
 
 class CustomLogoutView(LogoutView):
     def dispatch(self, request, *args, **kwargs):
