@@ -265,3 +265,28 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             login(self.request, user)
         
         return super().form_valid(form)
+
+class TaskCreateView(LoginRequiredMixin, CreateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'task_create.html'
+    success_url = reverse_lazy('tasks')
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        # Добавляем ВСЕХ пользователей, включая текущего
+        form.fields['executor'].queryset = User.objects.all()
+        form.fields['labels'].queryset = Label.objects.all()
+        return form
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Для отладки — выводим количество пользователей
+        print(f"DEBUG: Number of users for executor field: {User.objects.count()}")
+        return context
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, 'Задача успешно создана')
+        return response
