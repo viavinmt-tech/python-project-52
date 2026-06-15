@@ -12,7 +12,6 @@ from .models import Status, Task, Label
 from .forms import StatusForm, TaskForm, LabelForm
 from .filters import TaskFilter
 
-# Регистрация
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -24,7 +23,6 @@ def register_view(request):
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
 
-# Статусы
 class StatusListView(LoginRequiredMixin, ListView):
     model = Status
     template_name = 'statuses.html'
@@ -52,7 +50,18 @@ class StatusUpdateView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, 'Статус успешно изменен')
         return response
 
-# Задачи
+class StatusDeleteView(LoginRequiredMixin, DeleteView):
+    model = Status
+    template_name = 'status_delete.html'
+    success_url = reverse_lazy('statuses')
+    
+    def post(self, request, *args, **kwargs):
+        try:
+            return super().post(request, *args, **kwargs)
+        except ProtectedError:
+            messages.error(request, 'Невозможно удалить статус')
+            return redirect('statuses')
+
 class TaskListView(LoginRequiredMixin, FilterView):
     model = Task
     template_name = 'tasks.html'
@@ -115,7 +124,6 @@ class TaskDetailView(LoginRequiredMixin, DetailView):
     template_name = 'task_detail.html'
     context_object_name = 'task'
 
-# Метки
 class LabelListView(LoginRequiredMixin, ListView):
     model = Label
     template_name = 'labels.html'
@@ -159,32 +167,6 @@ class LabelDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(request, 'Метка успешно удалена')
         return super().post(request, *args, **kwargs)
 
-# Пользователи
-def trigger_error(request):
-    a = None
-    a.hello()
-    return HttpResponse("This will not be reached")
-
-
-class StatusDeleteView(LoginRequiredMixin, DeleteView):
-    model = Status
-    template_name = 'status_delete.html'
-    success_url = reverse_lazy('statuses')
-    
-    def dispatch(self, request, *args, **kwargs):
-        status = self.get_object()
-        if status.task_set.exists():
-            messages.error(request, 'Невозможно удалить статус')
-            return redirect('statuses')
-        return super().dispatch(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        messages.success(request, 'Статус успешно удален')
-        return super().post(request, *args, **kwargs)
-
-
-
-
 class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = User
     fields = ['first_name', 'last_name', 'username']
@@ -202,6 +184,37 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         messages.success(self.request, 'Пользователь успешно изменен')
         return super().form_valid(form)
 
+def trigger_error(request):
+    a = None
+    a.hello()
+    return HttpResponse("This will not be reached")
+
+class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = User
+    fields = ['first_name', 'last_name', 'username']
+    template_name = 'user_update.html'
+    success_url = reverse_lazy('users')
+    
+    def test_func(self):
+        return self.request.user.pk == self.get_object().pk
+    
+    def handle_no_permission(self):
+        messages.error(self.request, 'У вас нет прав для изменения')
+        return redirect('users')
+    
+    def get(self, request, *args, **kwargs):
+        print("=== GET request to UserUpdateView ===")
+        return super().get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        print("=== POST request to UserUpdateView ===")
+        return super().post(request, *args, **kwargs)
+    
+    def form_valid(self, form):
+        print("=== form_valid called ===")
+        messages.success(self.request, 'Пользователь успешно изменен')
+        return super().form_valid(form)
+
 class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = User
     template_name = 'user_delete.html'
@@ -214,10 +227,13 @@ class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         messages.error(self.request, 'У вас нет прав для изменения')
         return redirect('users')
     
-    def delete(self, request, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         user = self.get_object()
         if user.author_tasks.exists() or user.executor_tasks.exists():
             messages.error(request, 'Невозможно удалить пользователя, так как он связан с задачами')
             return redirect('users')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
         messages.success(request, 'Пользователь успешно удален')
-        return super().delete(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
