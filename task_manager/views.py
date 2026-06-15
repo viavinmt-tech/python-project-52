@@ -227,42 +227,6 @@ def register_view(request):
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
 
-class TaskCreateView(LoginRequiredMixin, CreateView):
-    model = Task
-    form_class = TaskForm
-    template_name = 'task_create.html'
-    success_url = reverse_lazy('tasks')
-    
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.fields['executor'].queryset = User.objects.all()
-        form.fields['labels'].queryset = Label.objects.all()
-        return form
-    
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        response = super().form_valid(form)
-        messages.success(self.request, 'Задача успешно создана')
-        return response
-
-class TaskCreateView(LoginRequiredMixin, CreateView):
-    model = Task
-    form_class = TaskForm
-    template_name = 'task_create.html'
-    success_url = reverse_lazy('tasks')
-    
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.fields['executor'].queryset = User.objects.all()
-        form.fields['labels'].queryset = Label.objects.all()
-        return form
-    
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        response = super().form_valid(form)
-        messages.success(self.request, 'Задача успешно создана')
-        return response
-
 class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = User
     fields = ['first_name', 'last_name', 'username']
@@ -286,6 +250,7 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         messages.success(self.request, 'Пользователь успешно изменен')
         return super().form_valid(form)
 
+
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     form_class = TaskForm
@@ -294,6 +259,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
+        # Принудительно заполняем исполнителей и метки
         form.fields['executor'].queryset = User.objects.all()
         form.fields['labels'].queryset = Label.objects.all()
         return form
