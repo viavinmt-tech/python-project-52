@@ -68,18 +68,6 @@ class TaskListView(LoginRequiredMixin, FilterView):
         context['show_only_self'] = self.request.GET.get('only_self') == 'on'
         return context
 
-class TaskCreateView(LoginRequiredMixin, CreateView):
-    model = Task
-    form_class = TaskForm
-    template_name = 'task_create.html'
-    success_url = reverse_lazy('tasks')
-    
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        response = super().form_valid(form)
-        messages.success(self.request, 'Задача успешно создана')
-        return response
-
 class TaskUpdateView(LoginRequiredMixin, UpdateView):
     model = Task
     form_class = TaskForm
@@ -267,3 +255,35 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
     def post(self, request, *args, **kwargs):
         messages.success(request, 'Задача успешно удалена')
         return super().post(request, *args, **kwargs)
+
+def register_view(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            user.first_name = request.POST.get('first_name', '')
+            user.last_name = request.POST.get('last_name', '')
+            user.save()
+            messages.success(request, 'Пользователь успешно зарегистрирован')
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})
+
+class TaskCreateView(LoginRequiredMixin, CreateView):
+    model = Task
+    form_class = TaskForm
+    template_name = 'task_create.html'
+    success_url = reverse_lazy('tasks')
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['executor'].queryset = User.objects.all()
+        form.fields['labels'].queryset = Label.objects.all()
+        return form
+    
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        response = super().form_valid(form)
+        messages.success(self.request, 'Задача успешно создана')
+        return response
