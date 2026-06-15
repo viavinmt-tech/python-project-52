@@ -50,18 +50,6 @@ class StatusUpdateView(LoginRequiredMixin, UpdateView):
         messages.success(self.request, 'Статус успешно изменен')
         return response
 
-class StatusDeleteView(LoginRequiredMixin, DeleteView):
-    model = Status
-    template_name = 'status_delete.html'
-    success_url = reverse_lazy('statuses')
-    
-    def post(self, request, *args, **kwargs):
-        try:
-            return super().post(request, *args, **kwargs)
-        except ProtectedError:
-            messages.error(request, 'Невозможно удалить статус, потому что он используется')
-            return redirect('statuses')
-
 class TaskListView(LoginRequiredMixin, FilterView):
     model = Task
     template_name = 'tasks.html'
@@ -238,18 +226,17 @@ class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         messages.success(request, 'Пользователь успешно удален')
         return super().post(request, *args, **kwargs)
 
+
+
 class StatusDeleteView(LoginRequiredMixin, DeleteView):
     model = Status
     template_name = 'status_delete.html'
     success_url = reverse_lazy('statuses')
     
-    def dispatch(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         status = self.get_object()
         if status.task_set.exists():
             messages.error(request, 'Невозможно удалить статус, потому что он используется')
             return redirect('statuses')
-        return super().dispatch(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
         messages.success(request, 'Статус успешно удален')
         return super().post(request, *args, **kwargs)
