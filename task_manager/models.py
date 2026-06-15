@@ -48,4 +48,10 @@ class Label(models.Model):
     def __str__(self):
         return self.name
 from django.contrib.auth.models import User
-User.add_to_class('fullName', property(lambda self: f"{self.first_name} {self.last_name}".strip()))
+
+from django.contrib.auth.models import User
+
+def get_full_name(self):
+    return f"{self.first_name} {self.last_name}".strip()
+
+User.add_to_class('full_name', property(get_full_name))
