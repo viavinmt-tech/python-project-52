@@ -56,7 +56,7 @@
             <select name="executor" id="id_executor" class="form-select w-50">
                 <option value="">---------</option>
                 {% for user in form.fields.executor.queryset %}
-                <option value="{{ user.pk }}" {% if form.executor.value|stringformat:"s" == user.pk|stringformat:"s" %}selected{% endif %}>{{ user.username }}</option>
+                <option value="{{ user.pk }}" {% if form.executor.value|stringformat:"s" == user.pk|stringformat:"s" %}selected{% endif %}>{{ user.first_name }} {{ user.last_name }}</option>
                 {% endfor %}
             </select>
         </div>
