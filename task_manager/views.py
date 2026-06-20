@@ -1,3 +1,4 @@
+PERMISSION_DENIED_MESSAGE = "У вас нет прав для изменения"
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
@@ -203,57 +204,4 @@ def trigger_error(request):
     return HttpResponse("This will not be reached")
 
 
-class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = User
-    fields = ['first_name', 'last_name', 'username']
-    template_name = 'user_update.html'
-    success_url = reverse_lazy('users')
-    
-    def test_func(self):
-        return self.request.user.pk == self.get_object().pk
-    
-    def handle_no_permission(self):
-        messages.error(self.request, 'PERMISSION_DENIED_MESSAGE')
-        return redirect('users')
-    
-    def form_valid(self, form):
-        user = form.save(commit=False)
-        password = self.request.POST.get('password')
-        password_confirm = self.request.POST.get('password_confirm')
-        if password and password == password_confirm:
-            user.set_password(password)
-        user.save()
-        messages.success(self.request, 'Пользователь успешно изменен')
-        return super().form_valid(form)
 
-class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = User
-    fields = ['first_name', 'last_name', 'username']
-    template_name = 'user_update.html'
-    success_url = reverse_lazy('users')
-    
-    def test_func(self):
-        return self.request.user.pk == self.get_object().pk
-    
-    def handle_no_permission(self):
-        messages.error(self.request, 'PERMISSION_DENIED_MESSAGE')
-        return redirect('users')
-    
-    def form_valid(self, form):
-        user = form.save(commit=False)
-        password = self.request.POST.get('password')
-        password_confirm = self.request.POST.get('password_confirm')
-        if password and password == password_confirm:
-            user.set_password(password)
-            user.save()
-            # Релогин пользователя после смены пароля
-            from django.contrib.auth import login
-            login(self.request, user)
-        else:
-            user.save()
-        messages.success(self.request, 'Пользователь успешно изменен')
-        return super().form_valid(form)
-
-PERMISSION_DENIED_MESSAGE = 'PERMISSION_DENIED_MESSAGE'
-
-PERMISSION_DENIED_MESSAGE = 'PERMISSION_DENIED_MESSAGE'

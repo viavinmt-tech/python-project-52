@@ -34,6 +34,7 @@ class CustomLogoutView(LogoutView):
         messages.success(request, 'Вы разлогинены')
         return super().dispatch(request, *args, **kwargs)
 
+# Для тестов Rollbar
 def trigger_error():
     a = None
     a.hello()
