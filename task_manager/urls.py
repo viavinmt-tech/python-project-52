@@ -60,3 +60,19 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('test-error/', trigger_error, name='test_error'),
 ]
+
+from django.views.decorators.http import require_http_methods
+
+@require_http_methods(["GET"])
+def home(request):
+    return render(request, 'home.html')
+
+@require_http_methods(["GET"])
+def users(request):
+    return render(request, 'users.html', {'users': User.objects.all()})
+
+def trigger_error(request):
+    a = None
+    if a is not None:  # Добавляем проверку
+        a.hello()
+    return HttpResponse("This will not be reached")

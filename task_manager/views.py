@@ -183,7 +183,7 @@ class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.request.user.pk == self.get_object().pk
     
     def handle_no_permission(self):
-        messages.error(self.request, 'У вас нет прав для изменения')
+        messages.error(self.request, 'PERMISSION_DENIED_MESSAGE')
         return redirect('users')
     
     def dispatch(self, request, *args, **kwargs):
@@ -213,7 +213,7 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user.pk == self.get_object().pk
     
     def handle_no_permission(self):
-        messages.error(self.request, 'У вас нет прав для изменения')
+        messages.error(self.request, 'PERMISSION_DENIED_MESSAGE')
         return redirect('users')
     
     def form_valid(self, form):
@@ -236,7 +236,7 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user.pk == self.get_object().pk
     
     def handle_no_permission(self):
-        messages.error(self.request, 'У вас нет прав для изменения')
+        messages.error(self.request, 'PERMISSION_DENIED_MESSAGE')
         return redirect('users')
     
     def form_valid(self, form):
@@ -253,3 +253,5 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             user.save()
         messages.success(self.request, 'Пользователь успешно изменен')
         return super().form_valid(form)
+
+PERMISSION_DENIED_MESSAGE = 'PERMISSION_DENIED_MESSAGE'
