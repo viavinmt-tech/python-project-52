@@ -5,6 +5,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
 from .views import (
     register_view,
     StatusListView, StatusCreateView, StatusUpdateView, StatusDeleteView,
@@ -13,9 +14,11 @@ from .views import (
     UserUpdateView, UserDeleteView
 )
 
+@require_http_methods(["GET"])
 def home(request):
     return render(request, 'home.html')
 
+@require_http_methods(["GET"])
 def users(request):
     return render(request, 'users.html', {'users': User.objects.all()})
 
@@ -31,7 +34,7 @@ class CustomLogoutView(LogoutView):
         messages.success(request, 'Вы разлогинены')
         return super().dispatch(request, *args, **kwargs)
 
-def trigger_error(request):
+def trigger_error():
     a = None
     a.hello()
     return HttpResponse("This will not be reached")
@@ -58,21 +61,5 @@ urlpatterns = [
     path('labels/<int:pk>/update/', LabelUpdateView.as_view(), name='label_update'),
     path('labels/<int:pk>/delete/', LabelDeleteView.as_view(), name='label_delete'),
     path('admin/', admin.site.urls),
-    path('test-error/', trigger_error, name='test_error'),
+    path('test-error/', lambda request: trigger_error(), name='test_error'),
 ]
-
-from django.views.decorators.http import require_http_methods
-
-@require_http_methods(["GET"])
-def home(request):
-    return render(request, 'home.html')
-
-@require_http_methods(["GET"])
-def users(request):
-    return render(request, 'users.html', {'users': User.objects.all()})
-
-def trigger_error(request):
-    a = None
-    if a is not None:  # Добавляем проверку
-        a.hello()
-    return HttpResponse("This will not be reached")

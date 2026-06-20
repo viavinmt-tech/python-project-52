@@ -255,3 +255,5 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return super().form_valid(form)
 
 PERMISSION_DENIED_MESSAGE = 'PERMISSION_DENIED_MESSAGE'
+
+PERMISSION_DENIED_MESSAGE = 'PERMISSION_DENIED_MESSAGE'
