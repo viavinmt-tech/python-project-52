@@ -9,29 +9,25 @@
     
     <div class="card mb-4 bg-light">
         <div class="card-body">
-            <form method="get" class="row g-3">
-                <div class="col-md-3">
-                    <label for="id_status" class="form-label fw-normal text-dark mb-1">Статус</label>
+            <form method="get">
+                <div class="mb-3">
+                    <label class="form-label fw-normal text-dark mb-1">Статус</label><br>
                     {{ filter.form.status }}
                 </div>
-                <div class="col-md-3">
-                    <label for="id_executor" class="form-label fw-normal text-dark mb-1">Исполнитель</label>
+                <div class="mb-3">
+                    <label class="form-label fw-normal text-dark mb-1">Исполнитель</label><br>
                     {{ filter.form.executor }}
                 </div>
-                <div class="col-md-3">
-                    <label for="id_labels" class="form-label fw-normal text-dark mb-1">Метка</label>
+                <div class="mb-3">
+                    <label class="form-label fw-normal text-dark mb-1">Метка</label><br>
                     {{ filter.form.labels }}
                 </div>
-                <div class="col-md-3">
-                    <div class="form-check mt-4">
-                        <input type="checkbox" name="only_self" id="id_only_self" class="form-check-input" {% if show_only_self %}checked{% endif %}>
-                        <label class="form-check-label" for="id_only_self">Только свои задачи</label>
-                    </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="only_self" id="id_only_self" class="form-check-input" {% if show_only_self %}checked{% endif %}>
+                    <label class="form-check-label" for="id_only_self">Только свои задачи</label>
                 </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary">Показать</button>
-                    <a href="{% url 'tasks' %}" class="btn btn-secondary ms-2">Сбросить</a>
-                </div>
+                <button type="submit" class="btn btn-primary">Показать</button>
+                <a href="{% url 'tasks' %}" class="btn btn-secondary ms-2">Сбросить</a>
             </form>
         </div>
     </div>
