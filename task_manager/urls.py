@@ -64,3 +64,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('test-error/', lambda request: trigger_error(), name='test_error'),
 ]
+
+# Для тестов Rollbar
+def trigger_error():
+    a = None
+    # a.hello()  # Временно закомментируем, чтобы избежать ошибки None
+    return HttpResponse("This will not be reached")
