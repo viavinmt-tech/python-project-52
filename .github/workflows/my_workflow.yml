@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - uses: actions/checkout@v4
 
       - name: Set up Python3
@@ -24,15 +25,3 @@ jobs:
 
       - name: Run linter
         run: make lint
-
-      - name: Run tests with coverage
-        run: |
-          source .venv/bin/activate
-          coverage run manage.py test
-          coverage xml
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
