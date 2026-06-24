@@ -1,4 +1,3 @@
-PERMISSION_DENIED_MESSAGE = "У вас нет прав для изменения"
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
@@ -6,12 +5,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-from django.db.models.deletion import ProtectedError
 from django_filters.views import FilterView
 from django.http import HttpResponse
 from .models import Status, Task, Label
 from .forms import StatusForm, TaskForm, LabelForm
 from .filters import TaskFilter
+
+PERMISSION_DENIED_MESSAGE = "У вас нет прав для изменения"
 
 def register_view(request):
     if request.method == 'POST':
@@ -109,6 +109,12 @@ class TaskUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'task_update.html'
     success_url = reverse_lazy('tasks')
     
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['executor'].queryset = User.objects.all()
+        form.fields['labels'].queryset = Label.objects.all()
+        return form
+    
     def form_valid(self, form):
         response = super().form_valid(form)
         messages.success(self.request, 'Задача успешно изменена')
@@ -175,37 +181,6 @@ class LabelDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(request, 'Метка успешно удалена')
         return super().post(request, *args, **kwargs)
 
-class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = User
-    template_name = 'user_delete.html'
-    success_url = reverse_lazy('users')
-    
-    def test_func(self):
-        return self.request.user.pk == self.get_object().pk
-    
-    def handle_no_permission(self):
-        messages.error(self.request, 'PERMISSION_DENIED_MESSAGE')
-        return redirect('users')
-    
-    def dispatch(self, request, *args, **kwargs):
-        user = self.get_object()
-        if user.author_tasks.exists() or user.executor_tasks.exists():
-            messages.error(request, 'Невозможно удалить пользователя, так как он связан с задачами')
-            return redirect('users')
-        return super().dispatch(request, *args, **kwargs)
-    
-    def post(self, request, *args, **kwargs):
-        messages.success(request, 'Пользователь успешно удален')
-        return super().post(request, *args, **kwargs)
-
-def trigger_error(request):
-    a = None
-    a.hello()
-    return HttpResponse("This will not be reached")
-
-
-
-
 class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = User
     fields = ['first_name', 'last_name', 'username']
@@ -225,10 +200,34 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         password_confirm = self.request.POST.get('password_confirm')
         if password and password == password_confirm:
             user.set_password(password)
-            user.save()
-            from django.contrib.auth import login
-            login(self.request, user)
-        else:
-            user.save()
+        user.save()
         messages.success(self.request, 'Пользователь успешно изменен')
         return super().form_valid(form)
+
+class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = User
+    template_name = 'user_delete.html'
+    success_url = reverse_lazy('users')
+    
+    def test_func(self):
+        return self.request.user.pk == self.get_object().pk
+    
+    def handle_no_permission(self):
+        messages.error(self.request, PERMISSION_DENIED_MESSAGE)
+        return redirect('users')
+    
+    def dispatch(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user.author_tasks.exists() or user.executor_tasks.exists():
+            messages.error(request, 'Невозможно удалить пользователя, так как он связан с задачами')
+            return redirect('users')
+        return super().dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        messages.success(request, 'Пользователь успешно удален')
+        return super().post(request, *args, **kwargs)
+
+def trigger_error(request):
+    a = None
+    a.hello()
+    return HttpResponse("This will not be reached")
