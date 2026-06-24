@@ -1,6 +1,7 @@
 .PHONY: install migrate collectstatic render-start build lint test test-coverage
 
 install:
+	curl -LsSf https://astral.sh/uv/install.sh | sh
 	uv pip install --system -r pyproject.toml
 	uv pip install --system coverage ruff
 
