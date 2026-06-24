@@ -2,7 +2,7 @@
 
 install:
 	uv pip install --system -r pyproject.toml
-	uv pip install --system coverage
+	uv pip install --system coverage ruff
 
 migrate:
 	python manage.py migrate
