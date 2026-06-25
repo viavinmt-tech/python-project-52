@@ -14,9 +14,11 @@ from .views import (
     UserUpdateView, UserDeleteView
 )
 
+@require_http_methods(["GET"])
 def home(request):
     return render(request, 'home.html')
 
+@require_http_methods(["GET"])
 def users(request):
     return render(request, 'users.html', {'users': User.objects.all()})
 
