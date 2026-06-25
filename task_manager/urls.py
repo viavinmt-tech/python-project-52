@@ -5,6 +5,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import HttpResponse
+from django.views.decorators.http import require_http_methods
 from .views import (
     register_view,
     StatusListView, StatusCreateView, StatusUpdateView, StatusDeleteView,
@@ -31,6 +32,7 @@ class CustomLogoutView(LogoutView):
         messages.success(request, 'Вы разлогинены')
         return super().dispatch(request, *args, **kwargs)
 
+@require_http_methods(["GET"])
 def trigger_error(request):
     a = None
     a.hello()
