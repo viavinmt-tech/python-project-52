@@ -1,18 +1,17 @@
 .PHONY: install migrate collectstatic render-start build lint test test-coverage
 
 install:
-	curl -LsSf https://astral.sh/uv/install.sh | sh
 	uv pip install --system -r pyproject.toml
 	uv pip install --system coverage ruff
 
 migrate:
-	python manage.py migrate
+	uv run python manage.py migrate
 
 collectstatic:
-	python manage.py collectstatic --noinput
+	uv run python manage.py collectstatic --noinput
 
 render-start:
-	gunicorn task_manager.wsgi:application
+	uv run gunicorn task_manager.wsgi:application
 
 build:
 	./build.sh
