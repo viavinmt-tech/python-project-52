@@ -1,24 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="ms-3">
+<div class="container-fluid px-0">
     <h1 class="fw-normal mb-4">Вход</h1>
     
     <form method="post">
         {% csrf_token %}
+        
         <div class="mb-3">
             <label for="id_username" class="form-label fw-normal text-dark mb-1">Имя пользователя</label>
-            <input type="text" name="username" id="id_username" class="form-control w-50 {% if form.errors %}is-invalid{% endif %}" placeholder="Имя пользователя" required>
+            <input type="text" name="username" id="id_username" class="form-control w-50" required>
         </div>
+        
         <div class="mb-3">
             <label for="id_password" class="form-label fw-normal text-dark mb-1">Пароль</label>
-            <input type="password" name="password" id="id_password" class="form-control w-50 {% if form.errors %}is-invalid{% endif %}" placeholder="Пароль" required>
+            <input type="password" name="password" id="id_password" class="form-control w-50" required>
         </div>
-        {% if form.errors %}
-            <div class="invalid-feedback d-block mb-3">
-                Неверный логин или пароль
-            </div>
-        {% endif %}
+        
         <button type="submit" class="btn btn-primary">Войти</button>
     </form>
 </div>
