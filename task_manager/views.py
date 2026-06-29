@@ -31,7 +31,7 @@ def register_view(request):
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
 
-class UserListView(LoginRequiredMixin, ListView):
+class UserListView(ListView):  # Убрали LoginRequiredMixin
     model = User
     template_name = 'users.html'
     context_object_name = 'users'
