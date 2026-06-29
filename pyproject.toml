@@ -51,3 +51,8 @@ exclude = [
 ]
 
 [tool.uv.sources]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.20",
+]
