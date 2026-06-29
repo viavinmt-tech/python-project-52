@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-normal">Задачи</h1>
+        <a href="{% url 'task_create' %}" class="btn btn-primary">Создать задачу</a>
+    </div>
+    
+    <div class="card mb-4 bg-light">
+        <div class="card-body">
+            <form method="get">
+                <div class="mb-3">
+                    <label class="form-label fw-normal text-dark mb-1">Статус</label><br>
+                    {{ filter.form.status }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-normal text-dark mb-1">Исполнитель</label><br>
+                    {{ filter.form.executor }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-normal text-dark mb-1">Метка</label><br>
+                    {{ filter.form.labels }}
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="only_self" id="id_only_self" class="form-check-input" {% if show_only_self %}checked{% endif %}>
+                    <label class="form-check-label" for="id_only_self">Только свои задачи</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Показать</button>
+                <a href="{% url 'tasks' %}" class="btn btn-secondary ms-2">Сбросить</a>
+            </form>
+        </div>
+    </div>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th class="fw-normal">ID</th>
+                <th class="fw-normal">Имя</th>
+                <th class="fw-normal">Статус</th>
+                <th class="fw-normal">Автор</th>
+                <th class="fw-normal">Исполнитель</th>
+                <th class="fw-normal">Дата создания</th>
+                <th class="fw-normal"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td>{{ task.id }}</td>
+                <td><a href="{% url 'task_detail' task.pk %}" class="text-primary text-decoration-underline">{{ task.name }}</a></td>
+                <td>{{ task.status.name }}</td>
+                <td>{{ task.author.username }}</td>
+                <td>{{ task.executor.username|default:"—" }}</td>
+                <td>{{ task.created_at|date:"d.m.Y H:i" }}</td>
+                <td>
+                    <div class="d-flex flex-column">
+                        <a href="{% url 'task_update' task.pk %}" class="text-primary text-decoration-underline">Изменить</a>
+                        <a href="{% url 'task_delete' task.pk %}" class="text-primary text-decoration-underline">Удалить</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">Нет задач</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

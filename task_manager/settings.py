@@ -1,15 +1,17 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
-import dj_database_url
-from django.http import Http404
+from django.core.management.utils import get_random_secret_key
 
-load_dotenv()
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
-SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-key')
+SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
+
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = ['webserver', 'localhost', '127.0.0.1', '.onrender.com']
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -18,9 +20,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'task_manager',
     'django_bootstrap5',
     'django_filters',
+    'task_manager.users',
+    'task_manager.statuses',
+    'task_manager.labels',
+    'task_manager.tasks',
 ]
 
 MIDDLEWARE = [
@@ -40,7 +45,7 @@ ROOT_URLCONF = 'task_manager.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -56,73 +61,45 @@ TEMPLATES = [
 WSGI_APPLICATION = 'task_manager.wsgi.application'
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {
-            'min_length': 3,
-        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = "/"
-LOGOUT_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
+LOGOUT_REDIRECT_URL = '/'
 
-# Rollbar configuration
-def get_rollbar_config():
-    config = {
-        'access_token': os.getenv('ROLLBAR_ACCESS_TOKEN'),
-        'environment': 'production' if not DEBUG else 'development',
-        'code_version': '1.0.0',
-        'root': BASE_DIR,
-    }
-    if not DEBUG:
-        config['exception_level_filters'] = [
-            ('django.http.Http404', 'warning'),
-        ]
-        config['scrub_fields'] = [
-            'password', 'secret', 'token', 'api_key',
-            'access_token', 'authorization', 'cookie',
-            'csrf_token', 'sessionid',
-        ]
-    return config
-
-ROLLBAR = get_rollbar_config()
-
-try:
-    import rollbar
-    import rollbar.contrib.django
-    MIDDLEWARE.append('rollbar.contrib.django.middleware.RollbarNotifierMiddleware')
-except ImportError:
-    pass
-
-# Message storage
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-
-# Message storage
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-        "OPTIONS": {"min_length": 3},
-    },
-]
+ROLLBAR = {
+    'access_token': os.getenv('ROLLBAR_ACCESS_TOKEN'),
+    'environment': 'development' if DEBUG else 'production',
+    'code_version': '1.0',
+    'root': BASE_DIR,
+}
