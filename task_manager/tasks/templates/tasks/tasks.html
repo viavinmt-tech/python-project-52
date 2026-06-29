@@ -11,27 +11,25 @@
     <div class="card mb-4 bg-light">
         <div class="card-body">
             <form method="get">
-                <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label fw-normal text-dark mb-1">Статус</label>
-                        {{ filter.form.status }}
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label fw-normal text-dark mb-1">Исполнитель</label>
-                        {{ filter.form.executor }}
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label class="form-label fw-normal text-dark mb-1">Метка</label>
-                        {{ filter.form.labels }}
-                    </div>
-                    <div class="col-md-3 mb-3 d-flex align-items-end">
-                        <div class="form-check me-3">
-                            <input type="checkbox" name="only_self" id="id_only_self" class="form-check-input" {% if show_only_self %}checked{% endif %}>
-                            <label class="form-check-label" for="id_only_self">Только свои задачи</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary me-2">Показать</button>
-                        <a href="{% url 'tasks' %}" class="btn btn-secondary">Сбросить</a>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label fw-normal text-dark mb-1">Статус</label>
+                    {{ filter.form.status }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-normal text-dark mb-1">Исполнитель</label>
+                    {{ filter.form.executor }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-normal text-dark mb-1">Метка</label>
+                    {{ filter.form.labels }}
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="only_self" id="id_only_self" class="form-check-input" {% if show_only_self %}checked{% endif %}>
+                    <label class="form-check-label" for="id_only_self">Только свои задачи</label>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                    <a href="{% url 'tasks' %}" class="btn btn-secondary ms-2">Сбросить</a>
                 </div>
             </form>
         </div>
