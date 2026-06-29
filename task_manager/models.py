@@ -7,6 +7,7 @@ class Status(models.Model):
     created_at = models.DateTimeField(default=timezone.now, verbose_name='Дата создания')
     
     class Meta:
+        app_label = 'statuses'
         verbose_name = 'Статус'
         verbose_name_plural = 'Статусы'
         ordering = ['id']
@@ -29,6 +30,7 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     
     class Meta:
+        app_label = 'tasks'
         verbose_name = 'Задача'
         verbose_name_plural = 'Задачи'
         ordering = ['-created_at']
@@ -41,24 +43,15 @@ class Label(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     
     class Meta:
+        app_label = 'labels'
         verbose_name = 'Метка'
         verbose_name_plural = 'Метки'
         ordering = ['id']
     
     def __str__(self):
         return self.name
-from django.contrib.auth.models import User
-
-from django.contrib.auth.models import User
 
 def get_full_name(self):
     return f"{self.first_name} {self.last_name}".strip()
 
-User.add_to_class('full_name', property(get_full_name))
-
-from django.contrib.auth.models import User
-
-def get_full_name_property(self):
-    return f"{self.first_name} {self.last_name}".strip()
-
-User.add_to_class('fullName', property(get_full_name_property))
+User.add_to_class('fullName', property(get_full_name))

@@ -1,13 +1,13 @@
 from django.contrib import admin
 from django.urls import path
 from django.shortcuts import render
-from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth.models import User
-from django.contrib import messages
-from django.http import HttpResponse
 from django.views.decorators.http import require_http_methods
+from django.http import HttpResponse
 from .views import (
     register_view,
+    UserListView,
+    CustomLoginView,
+    CustomLogoutView,
     StatusListView, StatusCreateView, StatusUpdateView, StatusDeleteView,
     TaskListView, TaskCreateView, TaskUpdateView, TaskDeleteView, TaskDetailView,
     LabelListView, LabelCreateView, LabelUpdateView, LabelDeleteView,
@@ -19,30 +19,14 @@ def home(request):
     return render(request, 'home.html')
 
 @require_http_methods(["GET"])
-def users(request):
-    return render(request, 'users.html', {'users': User.objects.all()})
-
-class CustomLoginView(LoginView):
-    template_name = 'login.html'
-    
-    def form_valid(self, form):
-        messages.success(self.request, 'Вы залогинены')
-        return super().form_valid(form)
-
-class CustomLogoutView(LogoutView):
-    def dispatch(self, request, *args, **kwargs):
-        messages.success(request, 'Вы разлогинены')
-        return super().dispatch(request, *args, **kwargs)
-
-# Для тестов Rollbar
-def trigger_error():
+def trigger_error(request):
     a = None
     a.hello()
     return HttpResponse("This will not be reached")
 
 urlpatterns = [
     path('', home, name='home'),
-    path('users/', users, name='users'),
+    path('users/', UserListView.as_view(), name='users'),
     path('users/create/', register_view, name='register'),
     path('users/<int:pk>/update/', UserUpdateView.as_view(), name='user_update'),
     path('users/<int:pk>/delete/', UserDeleteView.as_view(), name='user_delete'),
@@ -62,11 +46,5 @@ urlpatterns = [
     path('labels/<int:pk>/update/', LabelUpdateView.as_view(), name='label_update'),
     path('labels/<int:pk>/delete/', LabelDeleteView.as_view(), name='label_delete'),
     path('admin/', admin.site.urls),
-    path('test-error/', lambda request: trigger_error(), name='test_error'),
+    path('test-error/', trigger_error, name='test_error'),
 ]
-
-# Для тестов Rollbar
-def trigger_error():
-    a = None
-    # a.hello()  # Временно закомментируем, чтобы избежать ошибки None
-    return HttpResponse("This will not be reached")
