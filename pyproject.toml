@@ -18,6 +18,7 @@ dependencies = [
     "django-bootstrap5>=26.2",
     "django-filter>=25.2",
     "rollbar>=1.3.0",
+    "coverage>=7.14.3",
 ]
 
 [tool.setuptools.packages.find]
@@ -50,4 +51,3 @@ exclude = [
 ]
 
 [tool.uv.sources]
-coverage = ">=7.0.0"
