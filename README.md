@@ -30,3 +30,6 @@ make migrate
 
 # Запуск сервера
 make run
+
+# Запуск тестов с покрытием
+make test-coverage
