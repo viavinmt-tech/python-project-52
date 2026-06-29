@@ -8,11 +8,14 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib import messages
 from django_filters.views import FilterView
 from django.http import HttpResponse
+from django.db import IntegrityError
+from django.contrib.auth import update_session_auth_hash
 from .models import Status, Task, Label
 from .forms import StatusForm, TaskForm, LabelForm
 from .filters import TaskFilter
 
 PERMISSION_DENIED_MESSAGE = "У вас нет прав для изменения"
+PERMISSION_DELETE_MESSAGE = "У вас нет прав для удаления"
 
 def register_view(request):
     if request.method == 'POST':
@@ -216,8 +219,18 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         user = form.save(commit=False)
         password = self.request.POST.get('password')
         password_confirm = self.request.POST.get('password_confirm')
-        if password and password == password_confirm:
+        
+        if password or password_confirm:
+            if password != password_confirm:
+                messages.error(self.request, 'Пароли не совпадают')
+                return self.form_invalid(form)
+            if password and len(password) < 3:
+                messages.error(self.request, 'Пароль должен содержать минимум 3 символа')
+                return self.form_invalid(form)
             user.set_password(password)
+            # Обновляем сессию, чтобы пользователь не разлогинился
+            update_session_auth_hash(self.request, user)
+        
         user.save()
         messages.success(self.request, 'Пользователь успешно изменен')
         return super().form_valid(form)
@@ -234,16 +247,21 @@ class UserDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         messages.error(self.request, PERMISSION_DENIED_MESSAGE)
         return redirect('users')
     
-    def dispatch(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         user = self.get_object()
         if user.author_tasks.exists() or user.executor_tasks.exists():
             messages.error(request, 'Невозможно удалить пользователя, так как он связан с задачами')
             return redirect('users')
-        return super().dispatch(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
     
     def post(self, request, *args, **kwargs):
-        messages.success(request, 'Пользователь успешно удален')
-        return super().post(request, *args, **kwargs)
+        try:
+            response = super().post(request, *args, **kwargs)
+            messages.success(request, 'Пользователь успешно удален')
+            return response
+        except IntegrityError:
+            messages.error(request, 'Невозможно удалить пользователя, так как он связан с задачами')
+            return redirect('users')
 
 def trigger_error(request):
     a = None

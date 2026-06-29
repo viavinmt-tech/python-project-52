@@ -14,11 +14,10 @@ class StatusForm(forms.ModelForm):
         }
 
 class TaskForm(forms.ModelForm):
-    labels = forms.ModelMultipleChoiceField(
-        queryset=Label.objects.all(),
-        required=False,
-        widget=forms.SelectMultiple(attrs={'class': 'form-select'}),
-        label='Метки'
+    status = forms.ModelChoiceField(
+        queryset=Status.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-select'}),
+        label='Статус'
     )
     
     executor = forms.ModelChoiceField(
@@ -28,18 +27,23 @@ class TaskForm(forms.ModelForm):
         label='Исполнитель'
     )
     
+    labels = forms.ModelMultipleChoiceField(
+        queryset=Label.objects.all(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={'class': 'form-select'}),
+        label='Метки'
+    )
+    
     class Meta:
         model = Task
         fields = ['name', 'description', 'status', 'executor', 'labels']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Имя'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Описание', 'rows': 4}),
-            'status': forms.Select(attrs={'class': 'form-select'}),
         }
         labels = {
             'name': 'Имя',
             'description': 'Описание',
-            'status': 'Статус',
         }
 
 class LabelForm(forms.ModelForm):
