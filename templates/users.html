@@ -19,7 +19,7 @@
             <tr>
                 <td>{{ user.id }}</td>
                 <td>{{ user.username }}</td>
-                <td>{{ user.fullName }}</td>
+                <td>{% firstof user.fullName user.get_full_name user.username %}</td>
                 <td>{{ user.date_joined|date:"d.m.Y H:i" }}</td>
                 <td>
                     <div class="d-flex flex-column">
