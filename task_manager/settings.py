@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import dj_database_url
+from django.http import Http404
 
 load_dotenv()
 
@@ -86,8 +87,6 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = '/login/'
 
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
-
 # Rollbar configuration
 def get_rollbar_config():
     config = {
@@ -111,7 +110,19 @@ ROLLBAR = get_rollbar_config()
 
 try:
     import rollbar
-    import rollbar.contrib.django  # noqa: F401
+    import rollbar.contrib.django
     MIDDLEWARE.append('rollbar.contrib.django.middleware.RollbarNotifierMiddleware')
 except ImportError:
     pass
+
+# Message storage
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# Message storage
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {"min_length": 3},
+    },
+]

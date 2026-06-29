@@ -38,12 +38,3 @@ exclude = [
 DJANGO_SETTINGS_MODULE = "task_manager.settings"
 python_files = "tests.py"
 addopts = "--reuse-db"
-[tool.ruff]
-line-length = 100
-exclude = [
-    "migrations",
-    ".venv",
-    "__pycache__",
-    "staticfiles",
-    "task_manager/settings.py",
-]

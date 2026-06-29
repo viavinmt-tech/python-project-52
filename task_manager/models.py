@@ -47,9 +47,18 @@ class Label(models.Model):
     
     def __str__(self):
         return self.name
+from django.contrib.auth.models import User
 
-# Добавляем fullName к модели User
+from django.contrib.auth.models import User
+
 def get_full_name(self):
     return f"{self.first_name} {self.last_name}".strip()
 
-User.add_to_class('fullName', property(get_full_name))
+User.add_to_class('full_name', property(get_full_name))
+
+from django.contrib.auth.models import User
+
+def get_full_name_property(self):
+    return f"{self.first_name} {self.last_name}".strip()
+
+User.add_to_class('fullName', property(get_full_name_property))

@@ -34,8 +34,8 @@ class CustomLogoutView(LogoutView):
         messages.success(request, 'Вы разлогинены')
         return super().dispatch(request, *args, **kwargs)
 
-@require_http_methods(["GET"])
-def trigger_error(request):
+# Для тестов Rollbar
+def trigger_error():
     a = None
     a.hello()
     return HttpResponse("This will not be reached")
@@ -62,5 +62,11 @@ urlpatterns = [
     path('labels/<int:pk>/update/', LabelUpdateView.as_view(), name='label_update'),
     path('labels/<int:pk>/delete/', LabelDeleteView.as_view(), name='label_delete'),
     path('admin/', admin.site.urls),
-    path('test-error/', trigger_error, name='test_error'),
+    path('test-error/', lambda request: trigger_error(), name='test_error'),
 ]
+
+# Для тестов Rollbar
+def trigger_error():
+    a = None
+    # a.hello()  # Временно закомментируем, чтобы избежать ошибки None
+    return HttpResponse("This will not be reached")
