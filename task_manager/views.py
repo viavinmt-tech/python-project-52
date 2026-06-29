@@ -22,8 +22,8 @@ def register_view(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.first_name = request.POST.get('first_name', '')
-            user.last_name = request.POST.get('last_name', '')
+            user.first_name = request.POST.get('first_name', '').strip()
+            user.last_name = request.POST.get('last_name', '').strip()
             user.save()
             messages.success(request, 'Пользователь успешно зарегистрирован')
             return redirect('login')
