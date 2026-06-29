@@ -21,7 +21,7 @@ def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
             user.first_name = request.POST.get('first_name', '')
             user.last_name = request.POST.get('last_name', '')
             user.save()
