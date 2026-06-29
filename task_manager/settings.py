@@ -11,7 +11,19 @@ SECRET_KEY = os.getenv('SECRET_KEY', get_random_secret_key())
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+# Добавляем все возможные хосты для Docker и Render
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'webserver',
+    'app',
+    'webserver:9000',
+    'app:3000',
+    '0.0.0.0',
+    'hexlet-code-owdi.onrender.com',
+    '.onrender.com',
+    '.render.com',
+] + os.getenv('ALLOWED_HOSTS', '').split(',')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
