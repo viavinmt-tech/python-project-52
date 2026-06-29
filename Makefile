@@ -1,19 +1,23 @@
-.PHONY: install migrate collectstatic render-start build
-
-PYTHON = /opt/render/project/python/Python-3.12.13/bin/python3.12
-GUNICORN = /opt/render/project/python/Python-3.12.13/bin/gunicorn
+.PHONY: install migrate collectstatic render-start build lint test-coverage
 
 install:
-	uv pip install --system -r requirements.txt
+	uv sync
 
 migrate:
-	$(PYTHON) manage.py migrate
+	uv run python manage.py migrate
 
 collectstatic:
-	$(PYTHON) manage.py collectstatic --noinput
+	uv run python manage.py collectstatic --noinput
 
 render-start:
-	$(GUNICORN) task_manager.wsgi:application
+	uv run gunicorn task_manager.wsgi:application
 
 build:
 	./build.sh
+
+lint:
+	uv run ruff check task_manager --fix
+
+test-coverage:
+	uv run coverage run manage.py test
+	uv run coverage xml
