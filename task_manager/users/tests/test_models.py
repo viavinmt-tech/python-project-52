@@ -1,10 +1,10 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-import os
+import uuid
 
 class UserModelTest(TestCase):
     def test_user_creation(self):
-        test_password = os.environ.get('TEST_PASSWORD', 'testpass123')
+        test_password = str(uuid.uuid4())
         user = User.objects.create_user(
             username='testuser',
             password=test_password,

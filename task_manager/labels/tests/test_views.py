@@ -2,13 +2,13 @@ from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-class StatusViewsTest(TestCase):
-    def test_statuses_list_requires_login(self):
-        response = self.client.get(reverse('statuses'))
+class LabelViewsTest(TestCase):
+    def test_labels_list_requires_login(self):
+        response = self.client.get(reverse('labels'))
         self.assertEqual(response.status_code, 302)
     
-    def test_statuses_list_with_login(self):
+    def test_labels_list_with_login(self):
         User.objects.create_user(username='testuser', password='testpass123')
         self.client.login(username='testuser', password='testpass123')
-        response = self.client.get(reverse('statuses'))
+        response = self.client.get(reverse('labels'))
         self.assertEqual(response.status_code, 200)
