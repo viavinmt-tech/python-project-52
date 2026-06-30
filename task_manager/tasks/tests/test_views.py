@@ -8,7 +8,7 @@ class TaskViewsTest(TestCase):
         self.assertEqual(response.status_code, 302)
     
     def test_tasks_list_with_login(self):
-        User.objects.create_user(username='testuser', password='testpass123')
-        self.client.login(username='testuser', password='testpass123')
+        User.objects.create_user(username='testuser', password='testpass123')  # nosonar
+        self.client.login(username='testuser', password='testpass123')  # nosonar
         response = self.client.get(reverse('tasks'))
         self.assertEqual(response.status_code, 200)
