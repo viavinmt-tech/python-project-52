@@ -2,10 +2,12 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from task_manager.statuses.models import Status
 from task_manager.tasks.models import Task
+import os
 
 class TaskModelTest(TestCase):
     def test_task_creation(self):
-        user = User.objects.create_user(username='testuser', password='testpass')
+        test_password = os.environ.get('TEST_PASSWORD', 'testpass')
+        user = User.objects.create_user(username='testuser', password=test_password)
         status = Status.objects.create(name='Test Status')
         task = Task.objects.create(
             name='Test Task',

@@ -6,6 +6,7 @@ from django.http import HttpResponse
 def home(request):
     return render(request, 'home.html')
 
+@require_http_methods(["GET"])
 def trigger_error(request):
     a = None
     a.hello()
